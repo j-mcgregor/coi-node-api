@@ -13,6 +13,7 @@ const countries = require("./routes/api/countries");
 
 const app = express();
 
+// Enable CORS
 app.use(cors());
 app.options("*", cors());
 
