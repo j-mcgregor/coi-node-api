@@ -212,7 +212,8 @@ router.get(
   (req, res) => {
     User.findOne({ _id: req.params.id })
       .then(user => {
-        user.admin = !user.admin;
+        user.admin ? (user.admin = false) : (user.admin = true);
+        // user.admin = !user.admin;
         user.save().then(user => res.status(404).json(user));
       })
       .catch(err => {
