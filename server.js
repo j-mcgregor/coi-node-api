@@ -53,6 +53,11 @@ app.use("/api/projects", projects);
 app.use("/api/chapters", chapters);
 app.use("/api/countries", countries);
 
-const port = process.env.port || 3001;
+// const port = process.env.port || 3001;
+
+let port = process.env.PORT;
+if (port == null || port == "") {
+  port = 8000;
+}
 
 app.listen(port, () => console.log(`Server is running on ${port}`));
