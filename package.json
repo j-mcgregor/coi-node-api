@@ -25,6 +25,7 @@
     "body-parser": "^1.18.2",
     "brcrypt": "https://github.com/kelektiv/node.bcrypt.js.git#master",
     "concurrently": "^3.5.1",
+    "cors": "^2.8.5",
     "country-list": "^2.1.0",
     "express": "^4.16.3",
     "faker": "^4.1.0",
