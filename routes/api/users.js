@@ -232,7 +232,7 @@ router.get(
   (req, res) => {
     User.findOne({ _id: req.params.id })
       .then(user => {
-        user.lead = !user.lead;
+        user.lead ? (user.lead = false) : (user.lead = true);
         user.save().then(user => res.status(404).json(user));
       })
       .catch(err => {
