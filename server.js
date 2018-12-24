@@ -14,6 +14,7 @@ const countries = require("./routes/api/countries");
 const app = express();
 
 app.use(cors());
+app.options("*", cors());
 
 // Body Parser
 app.use(bodyParser.urlencoded({ extended: false }));
