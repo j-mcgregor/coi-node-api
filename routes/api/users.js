@@ -56,45 +56,10 @@ router.post("/register", (req, res) => {
         password: req.body.password
       });
 
-      bcrypt.genSalt(10, (err, salt) => {
-        bcrypt.hash(newUser.password, salt, (err, hash) => {
-          if (err) throw err;
-          newUser.password = hash;
-          newUser
-            .save()
-            .then(user => {
-              Chapter.findOne({ _id: user.chapter._id })
-                .then(chapter => {
-                  chapter.members.forEach(member => {
-                    if (member.lead) {
-                      const transporter = nodemailer.createTransport({
-                        service: "gmail",
-                        auth: {
-                          user: "jackjwmcgregor@gmail.com",
-                          pass: "G00gl31988!!"
-                        }
-                      });
-
-                      const mailOptions = {
-                        from: "jackjwmcgregor@gmail.com",
-                        to: `${lead.email}`,
-                        subject: "A new member",
-                        html: `<h1 style="color:rgb(221, 53, 69);">A new member, ${
-                          newUser.firstName
-                        } ${newUser.lastName}, has joined ${chapter.city}</h1>`
-                      };
-
-                      transporter.sendMail(mailOptions, function(error, info) {
-                        if (error) {
-                          console.log(error);
-                        } else {
-                          console.log("Email sent: " + info.response);
-                        }
-                      });
-                    }
-                  });
-                })
-                .catch(err => console.log(err));
+      Chapter.findOne({ _id: user.chapter })
+        .then(chapter => {
+          chapter.members.forEach(member => {
+            if (member.lead) {
               const transporter = nodemailer.createTransport({
                 service: "gmail",
                 auth: {
@@ -105,7 +70,43 @@ router.post("/register", (req, res) => {
 
               const mailOptions = {
                 from: "jackjwmcgregor@gmail.com",
-                to: `${user.email}, jmcgregor@spartaglobal.com`,
+                to: `${member.email}`,
+                subject: "A new member",
+                html: `<h1 style="color:rgb(221, 53, 69);">A new member, ${
+                  newUser.firstName
+                } ${newUser.lastName}, has joined ${chapter.city}</h1>`
+              };
+
+              transporter.sendMail(mailOptions, function(error, info) {
+                if (error) {
+                  console.log(error);
+                } else {
+                  console.log("Email sent: " + info.response);
+                }
+              });
+            }
+          });
+        })
+        .catch(err => console.log(err));
+
+      bcrypt.genSalt(10, (err, salt) => {
+        bcrypt.hash(newUser.password, salt, (err, hash) => {
+          if (err) throw err;
+          newUser.password = hash;
+          newUser
+            .save()
+            .then(user => {
+              const transporter = nodemailer.createTransport({
+                service: "gmail",
+                auth: {
+                  user: "jackjwmcgregor@gmail.com",
+                  pass: "G00gl31988!!"
+                }
+              });
+
+              const mailOptions = {
+                from: "jackjwmcgregor@gmail.com",
+                to: `${user.email}`,
                 subject: "Welcome to the Circle of Intraprenurs",
                 html: `<h1 style="color:rgb(221, 53, 69);">Welcome to the Circle of Intrapreneurs, ${
                   user.firstName
