@@ -71,7 +71,7 @@ router.post("/register", (req, res) => {
                         service: "gmail",
                         auth: {
                           user: "jackjwmcgregor@gmail.com",
-                          pass: "G00gl31988!!"
+                          pass: "blah"
                         }
                       });
 
