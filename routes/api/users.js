@@ -76,7 +76,7 @@ router.post("/register", (req, res) => {
                       });
 
                       const mailOptions = {
-                        from: "jackjwmcgregor@gmail.com",
+                        from: "team@circleofyi.com",
                         to: `${member.email}`,
                         subject: "A new member",
                         html: `<h1 style="color:rgb(221, 53, 69);">A new member, ${
@@ -99,12 +99,12 @@ router.post("/register", (req, res) => {
                 service: "gmail",
                 auth: {
                   user: "jackjwmcgregor@gmail.com",
-                  pass: "G00gl31988!!"
+                  pass: "blah"
                 }
               });
 
               const mailOptions = {
-                from: "jackjwmcgregor@gmail.com",
+                from: "team@circleofyi.com",
                 to: `${user.email}`,
                 subject: "Welcome to the Circle of Intraprenurs",
                 html: `<h1 style="color:rgb(221, 53, 69);">Welcome to the Circle of Intrapreneurs, ${
