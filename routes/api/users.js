@@ -70,8 +70,8 @@ router.post("/register", (req, res) => {
                       const transporter = nodemailer.createTransport({
                         service: "gmail",
                         auth: {
-                          user: "jackjwmcgregor@gmail.com",
-                          pass: "blah"
+                          user: process.env.EMAIL_SRC,
+                          pass: process.env.PASSWORD_SRC
                         }
                       });
 
@@ -98,8 +98,8 @@ router.post("/register", (req, res) => {
               const transporter = nodemailer.createTransport({
                 service: "gmail",
                 auth: {
-                  user: "jackjwmcgregor@gmail.com",
-                  pass: "blah"
+                  user: process.env.EMAIL_SRC,
+                  pass: process.env.PASSWORD_SRC
                 }
               });
 
