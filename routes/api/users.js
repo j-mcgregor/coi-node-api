@@ -56,39 +56,6 @@ router.post("/register", (req, res) => {
         password: req.body.password
       });
 
-      Chapter.findOne({ _id: newUser.chapter })
-        .then(chapter => {
-          chapter.members.forEach(member => {
-            if (member.lead) {
-              const transporter = nodemailer.createTransport({
-                service: "gmail",
-                auth: {
-                  user: "jackjwmcgregor@gmail.com",
-                  pass: "G00gl31988!!"
-                }
-              });
-
-              const mailOptions = {
-                from: "jackjwmcgregor@gmail.com",
-                to: `${member.email}`,
-                subject: "A new member",
-                html: `<h1 style="color:rgb(221, 53, 69);">A new member, ${
-                  newUser.firstName
-                } ${newUser.lastName}, has joined ${chapter.city}</h1>`
-              };
-
-              transporter.sendMail(mailOptions, function(error, info) {
-                if (error) {
-                  console.log(error);
-                } else {
-                  console.log("Email sent: " + info.response);
-                }
-              });
-            }
-          });
-        })
-        .catch(err => console.log(err));
-
       bcrypt.genSalt(10, (err, salt) => {
         bcrypt.hash(newUser.password, salt, (err, hash) => {
           if (err) throw err;
@@ -96,6 +63,38 @@ router.post("/register", (req, res) => {
           newUser
             .save()
             .then(user => {
+              Chapter.findById(user.chapter)
+                .then(chapter => {
+                  chapter.members.forEach(member => {
+                    if (member.lead) {
+                      const transporter = nodemailer.createTransport({
+                        service: "gmail",
+                        auth: {
+                          user: "jackjwmcgregor@gmail.com",
+                          pass: "G00gl31988!!"
+                        }
+                      });
+
+                      const mailOptions = {
+                        from: "jackjwmcgregor@gmail.com",
+                        to: `${member.email}`,
+                        subject: "A new member",
+                        html: `<h1 style="color:rgb(221, 53, 69);">A new member, ${
+                          user.firstName
+                        } ${user.lastName}, has joined ${chapter.city}</h1>`
+                      };
+
+                      transporter.sendMail(mailOptions, function(error, info) {
+                        if (error) {
+                          console.log(error);
+                        } else {
+                          console.log("Email sent: " + info.response);
+                        }
+                      });
+                    }
+                  });
+                })
+                .catch(err => console.log(err));
               const transporter = nodemailer.createTransport({
                 service: "gmail",
                 auth: {
