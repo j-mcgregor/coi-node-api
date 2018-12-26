@@ -56,7 +56,7 @@ router.post("/register", (req, res) => {
         password: req.body.password
       });
 
-      Chapter.findOne({ _id: user.chapter })
+      Chapter.findOne({ _id: newUser.chapter })
         .then(chapter => {
           chapter.members.forEach(member => {
             if (member.lead) {
