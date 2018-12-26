@@ -3,6 +3,7 @@ const router = express.Router();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const passport = require("passport");
+const nodemailer = require("nodemailer");
 
 // Load input validation
 const validateRegisterInput = require("../../validation/register");
@@ -12,6 +13,7 @@ const keys = require("../../config/keys");
 
 // Load User Model
 const User = require("../../models/User");
+const Project = require("../../models/Project");
 
 // @route    GET api/users/test
 // @desc     Tests Users Route
@@ -60,7 +62,65 @@ router.post("/register", (req, res) => {
           newUser.password = hash;
           newUser
             .save()
-            .then(user => res.json(user))
+            .then(user => {
+              Chapter.findOne({ _id: user.chapter._id })
+                .then(chapter => {
+                  chapter.members.forEach(member => {
+                    if (member.lead) {
+                      const transporter = nodemailer.createTransport({
+                        service: "gmail",
+                        auth: {
+                          user: "jackjwmcgregor@gmail.com",
+                          pass: "G00gl31988!!"
+                        }
+                      });
+
+                      const mailOptions = {
+                        from: "jackjwmcgregor@gmail.com",
+                        to: `${lead.email}`,
+                        subject: "A new member",
+                        html: `<h1 style="color:rgb(221, 53, 69);">A new member, ${
+                          newUser.firstName
+                        } ${newUser.lastName}, has joined ${chapter.city}</h1>`
+                      };
+
+                      transporter.sendMail(mailOptions, function(error, info) {
+                        if (error) {
+                          console.log(error);
+                        } else {
+                          console.log("Email sent: " + info.response);
+                        }
+                      });
+                    }
+                  });
+                })
+                .catch(err => console.log(err));
+              const transporter = nodemailer.createTransport({
+                service: "gmail",
+                auth: {
+                  user: "jackjwmcgregor@gmail.com",
+                  pass: "G00gl31988!!"
+                }
+              });
+
+              const mailOptions = {
+                from: "jackjwmcgregor@gmail.com",
+                to: `${user.email}, jmcgregor@spartaglobal.com`,
+                subject: "Welcome to the Circle of Intraprenurs",
+                html: `<h1 style="color:rgb(221, 53, 69);">Welcome to the Circle of Intrapreneurs, ${
+                  user.firstName
+                }</h1><a href="http://www.google.com">Google</a>`
+              };
+
+              transporter.sendMail(mailOptions, function(error, info) {
+                if (error) {
+                  console.log(error);
+                } else {
+                  console.log("Email sent: " + info.response);
+                }
+              });
+              res.json(user);
+            })
             .catch(err => res.json(err));
         });
       });
@@ -124,6 +184,21 @@ router.post("/login", (req, res) => {
   });
 });
 
+// @route    DELETE api/users/:id
+// @desc     Remove a User
+// @access   Public (for now)
+
+router.delete(
+  "/:id",
+  // passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    // Find User by email
+    User.deleteOne({ _id: req.params.id })
+      .then(res.send("User deleted"))
+      .catch(err => console.log(err));
+  }
+);
+
 // @route    GET api/users/current
 // @desc     Return the current user
 // @access   Private
@@ -176,9 +251,11 @@ router.get("/:id/projects", (req, res) => {
 router.get("/", (req, res) => {
   User.find()
     .populate("chapter", ["_id", "city"])
-    .populate("projects", ["_id"])
+    .populate("projects", ["_id", "title"])
     .exec()
-    .then(users => res.status(200).json(users))
+    .then(users => {
+      res.status(200).json(users);
+    })
     .catch(err => console.log(err));
 });
 

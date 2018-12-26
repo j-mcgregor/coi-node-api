@@ -32,7 +32,8 @@ const UserSchema = new Schema({
   },
   projects: [
     {
-      type: String
+      type: Schema.Types.ObjectId,
+      ref: "project"
     }
   ],
   profilePic: {

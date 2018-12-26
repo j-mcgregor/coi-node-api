@@ -69,6 +69,10 @@ async function init() {
       } else if (i === 1) {
         email = `lead@test${index}.com`;
         lead = true;
+      } else if (i === 2) {
+        email = `jackjwmcgregor@gmail.com`;
+        admin = true;
+        lead = true;
       } else {
         email = `test${i}@test${index}.com`;
       }
