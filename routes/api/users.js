@@ -134,7 +134,7 @@ router.post("/register", (req, res) => {
 
 router.post("/feedback", (req, res) => {
   const transporter = nodemailer.createTransport({
-    service: "yahoo",
+    service: "Yahoo",
     auth: {
       user: process.env.EMAIL_SRC,
       pass: process.env.PASSWORD_SRC
