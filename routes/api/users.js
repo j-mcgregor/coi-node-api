@@ -128,6 +128,38 @@ router.post("/register", (req, res) => {
   });
 });
 
+// @route    POST api/users/feedback
+// @desc     Send feedback
+// @access   Public
+
+router.post("/feedback", (req, res) => {
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: process.env.EMAIL_SRC,
+      pass: process.env.PASSWORD_SRC
+    }
+  });
+
+  const mailOptions = {
+    from: "team@circleofyi.com",
+    to: req.body.feedback.email,
+    subject: "Feedbck",
+    html: `<h1 style="color:rgb(221, 53, 69);">Thanks for your feedback, ${
+      req.body.feedback.fullName
+    }</h1><h3>You provided the following piece of feedback to the Circle of Intrapreneurs:</h3><p>${
+      req.body.feedback.body
+    }</p>`
+  };
+
+  transporter.sendMail(mailOptions, function(error, info) {
+    if (error) {
+      console.log(error);
+    } else {
+      console.log("Email sent: " + info.response);
+    }
+  });
+});
 // @route    GET api/users/login
 // @desc     Login a User / Return the JWT
 // @access   Public

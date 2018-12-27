@@ -58,8 +58,6 @@ app.use("/api/countries", countries);
 // const port = process.env.port || 3001;
 
 let port = process.env.PORT;
-console.log("The fucking port is : " + port);
-console.log(process.env);
 if (port == null || port == "") {
   port = 8000;
 }
