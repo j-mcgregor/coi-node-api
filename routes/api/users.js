@@ -134,7 +134,7 @@ router.post("/register", (req, res) => {
 
 router.post("/feedback", (req, res) => {
   const transporter = nodemailer.createTransport({
-    service: "gmail",
+    service: "yahoo",
     auth: {
       user: process.env.EMAIL_SRC,
       pass: process.env.PASSWORD_SRC
@@ -142,7 +142,7 @@ router.post("/feedback", (req, res) => {
   });
 
   const mailOptions = {
-    from: "team@circleofyi.com",
+    from: "circletest123@@yahoo.com",
     to: req.body.feedback.email,
     subject: "Feedbck",
     html: `<h1 style="color:rgb(221, 53, 69);">Thanks for your feedback, ${
