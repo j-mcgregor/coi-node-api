@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const passport = require("passport");
 const cors = require("cors");
+const dotenv = require("dotenv");
 
 const users = require("./routes/api/users");
 const profile = require("./routes/api/profile");
@@ -14,6 +15,7 @@ const countries = require("./routes/api/countries");
 const app = express();
 
 // Enable CORS
+dotenv.config();
 app.use(cors());
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
@@ -56,6 +58,8 @@ app.use("/api/countries", countries);
 // const port = process.env.port || 3001;
 
 let port = process.env.PORT;
+console.log("The fucking port is : " + port);
+console.log(process.env);
 if (port == null || port == "") {
   port = 8000;
 }

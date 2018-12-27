@@ -1,5 +1,4 @@
 module.exports = {
-  db:
-    "mongodb://circleofintrapreneurs:C1rcl31234!!@ds141654.mlab.com:41654/circle-of-intrapreneurs",
+  db: process.env.MONGODB_URI,
   secretOrKey: process.env.SECRET_OR_KEY
 };
