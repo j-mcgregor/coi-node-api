@@ -134,7 +134,10 @@ router.post("/register", (req, res) => {
 
 router.post("/feedback", (req, res) => {
   const transporter = nodemailer.createTransport({
+    host: "smtp.mail.yahoo.com",
+    port: 465,
     service: "Yahoo",
+    secure: false,
     auth: {
       user: process.env.EMAIL_SRC,
       pass: process.env.PASSWORD_SRC
@@ -142,13 +145,13 @@ router.post("/feedback", (req, res) => {
   });
 
   const mailOptions = {
-    from: "circletest123@@yahoo.com",
-    to: req.body.feedback.email,
+    from: "circletest123@yahoo.com",
+    to: req.body.email,
     subject: "Feedbck",
     html: `<h1 style="color:rgb(221, 53, 69);">Thanks for your feedback, ${
-      req.body.feedback.fullName
+      req.body.fullName
     }</h1><h3>You provided the following piece of feedback to the Circle of Intrapreneurs:</h3><p>${
-      req.body.feedback.body
+      req.body.body
     }</p>`
   };
 
