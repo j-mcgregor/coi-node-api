@@ -4,6 +4,7 @@ const bodyParser = require("body-parser");
 const passport = require("passport");
 const cors = require("cors");
 const dotenv = require("dotenv");
+const formidable = require("formidable");
 
 const users = require("./routes/api/users");
 const profile = require("./routes/api/profile");

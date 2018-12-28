@@ -3,6 +3,14 @@ const router = express.Router();
 
 const mongoose = require("mongoose");
 const passport = require("passport");
+const cloudinary = require("cloudinary");
+const axios = require("axios");
+const multer = require("multer");
+const fileUploadMiddleware = require("../../fileUploadMiddleware");
+
+const storage = multer.memoryStorage();
+const UPLOAD_PATH = "uploads";
+const upload = multer({ dest: `${UPLOAD_PATH}/` });
 
 // Models
 const Post = require("../../models/Post");
@@ -50,12 +58,6 @@ router.post(
   "/",
   passport.authenticate("jwt", { session: false }),
   (req, res) => {
-    // const { errors, isValid } = validatePostInput(req.body);
-    //
-    // if (!isValid) {
-    //   return res.status(400).json(errors);
-    // }
-
     const newPost = new Post({
       title: req.body.title,
       tagline: req.body.tagline,
@@ -67,6 +69,25 @@ router.post(
     newPost.save().then(post => res.json(post));
   }
 );
+
+// @route    POST api/posts/files
+// @desc     Upload Posts Image
+// @access   Private
+
+router.post("/files", upload.single("file"), (req, res) => {
+  cloudinary.config({
+    cloud_name: `${process.env.CLOUDINARY_NAME}`,
+    api_key: `${process.env.CLOUDINARY_API_KEY}`,
+    api_secret: `${process.env.CLOUDINARY_API_SECRET}`
+  });
+  cloudinary.v2.uploader.upload(req.file.path, function(error, result) {
+    if (error) {
+      return res.json(error);
+    } else if (result) {
+      return res.json(result);
+    }
+  });
+});
 
 // @route    PUT api/posts/:id
 // @desc     Create Posts
