@@ -119,7 +119,7 @@ router.delete(
   passport.authenticate("jwt", { session: false }),
   (req, res) => {
     console.log(req.params);
-    Post.deleteOne(req.params.id)
+    Post.deleteOne({ _id: req.params.id })
       .then(() => res.json({ success: true }))
       .catch(err => res.status(404).json({ postnotfound: "No Post Found" }));
   }
