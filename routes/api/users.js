@@ -66,6 +66,7 @@ router.post("/register", (req, res) => {
               Chapter.findById(user.chapter)
                 .then(chapter => {
                   chapter.members.forEach(member => {
+                    // email the chapter leads
                     if (member.lead) {
                       const transporter = nodemailer.createTransport({
                         service: "gmail",
@@ -256,6 +257,24 @@ router.get(
   (req, res) => {
     const errors = {};
     User.findById(req.params.id)
+      .then(user => res.status(200).json(user))
+      .catch(err => {
+        errors.usernotfound = "User Not Found";
+        return res.status(400).json(errors);
+      });
+  }
+);
+
+// @route    PUT api/users/:id
+// @desc     Update the selected user
+// @access   Private
+
+router.put(
+  `/:id`,
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    const errors = {};
+    User.findByIdAndUpdate(req.user.id, req.body)
       .then(user => res.status(200).json(user))
       .catch(err => {
         errors.usernotfound = "User Not Found";
