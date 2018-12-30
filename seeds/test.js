@@ -24,6 +24,17 @@ var chapters = [
     linkedin2: "https://www.linkedin.com/in/davidjspears/"
   },
   {
+    lat: "37.774929",
+    lng: "-122.419418",
+    city: "San Francisco",
+    country: "United States",
+    countryCode: "US",
+    facebook: "",
+    twitter: "",
+    linkedin1: "",
+    linkedin2: ""
+  },
+  {
     lat: "34.05223",
     lng: "-118.24368",
     city: "Los Angeles",
@@ -63,6 +74,66 @@ var chapters = [
     facebook: "https://www.facebook.com/COYIBoston/",
     twitter: "Alejagrupp ",
     linkedin1: "https://www.linkedin.com/in/alejandra-grupp-5aa7a51a/"
+  },
+  {
+    lat: "40.440624",
+    lng: "-79.995888",
+    city: "Pittsburgh",
+    country: "United States",
+    countryCode: "USA",
+    facebook: "",
+    twitter: "",
+    linkedin1: ""
+  },
+  {
+    lat: "19.432608",
+    lng: "-99.133209",
+    city: "Mexico City",
+    country: "Mexico",
+    countryCode: "MX",
+    facebook: "",
+    twitter: "",
+    linkedin1: ""
+  },
+  {
+    lat: "47.376888",
+    lng: "8.541694",
+    city: "Zurich",
+    country: "Switzerland",
+    countryCode: "CHE",
+    facebook: "",
+    twitter: "",
+    linkedin1: ""
+  },
+  {
+    lat: "-0.100658",
+    lng: "-78.718420",
+    city: "Quito",
+    country: "Ecuador",
+    countryCode: "EC",
+    facebook: "",
+    twitter: "",
+    linkedin1: ""
+  },
+  {
+    lat: "-36.848461",
+    lng: "174.763336",
+    city: "Auckland",
+    country: "New Zealand",
+    countryCode: "NZ",
+    facebook: "",
+    twitter: "",
+    linkedin1: ""
+  },
+  {
+    lat: "1.352083",
+    lng: "103.819839",
+    city: "Singapore",
+    country: "Singapore",
+    countryCode: "SGP",
+    facebook: "",
+    twitter: "",
+    linkedin1: ""
   },
   {
     lat: "53.3498",
@@ -197,17 +268,7 @@ var chapters = [
     linkedin1: "https://www.linkedin.com/in/nadersaif/",
     linkedin2: "https://www.linkedin.com/in/kabir-sewani-b6512039/"
   },
-  {
-    lat: "41.8781",
-    lng: "-87.6298",
-    city: "Chicago",
-    country: "United States",
-    countryCode: "US",
-    facebook: "https://www.facebook.com/COYICHI/",
-    twitter: "jredding90",
-    linkedin1: "https://www.linkedin.com/in/jack-redding-6541b434/",
-    linkedin2: "https://www.linkedin.com/in/juliemuggli/"
-  },
+
   {
     lat: "59.3293",
     lng: "18.0686",
