@@ -19,7 +19,6 @@ router.get("/test", (req, res) => res.json({ msg: "Chapters works" }));
 
 router.get("/", (req, res) => {
   Chapter.find()
-    .populate("country", ["name", "code"])
     .then(chapters => {
       return res.json(chapters);
     })

@@ -1,4 +1,5 @@
 const faker = require("faker");
+const chaptersList = require("./test"); //should change to chapters
 const countryList = require("./countries");
 const axios = require("axios");
 const bcrypt = require("bcryptjs");
@@ -54,18 +55,20 @@ function getCountries() {
 // ========= CREATE CHAPTERS =========
 function createChapters(countryArray) {
   let chapters = [];
-  for (var i = 0; i < 10; i++) {
+  chaptersList.forEach(chapter => {
     const country = Math.floor(Math.random() * countryArray.length);
     const randBannerPic = Math.floor(Math.random() * bannerDimensions.length);
-    const chapter = Chapter.create({
-      country: countryArray[country],
-      city: faker.address.city(),
-      twitterURL: faker.lorem.word(),
+    const newChapter = Chapter.create({
       bannerPic: `https://placeimg.com/${bannerDimensions[randBannerPic]}/arch`,
-      members: []
+      lat: chapter.lat,
+      lng: chapter.lng,
+      city: chapter.city,
+      country: chapter.country,
+      countryCode: chapter.countryCode,
+      twitterUrl: "circleofyi"
     });
-    chapters.push(chapter);
-  }
+    chapters.push(newChapter);
+  });
   return chapters;
 }
 

@@ -4,12 +4,21 @@ const Schema = mongoose.Schema;
 // Create Schema
 const ChapterSchema = new Schema({
   country: {
-    type: Schema.Types.ObjectId,
-    ref: "countries"
+    type: String,
+    required: true
+  },
+  countryCode: {
+    type: String
   },
   city: {
     type: String,
     required: true
+  },
+  lat: {
+    type: String
+  },
+  lng: {
+    type: String
   },
   leads: [
     {
@@ -21,7 +30,7 @@ const ChapterSchema = new Schema({
       type: Object
     }
   ],
-  twitterURL: {
+  twitterUrl: {
     type: String,
     required: true
   },
