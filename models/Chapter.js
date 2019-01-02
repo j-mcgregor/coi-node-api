@@ -15,21 +15,19 @@ const ChapterSchema = new Schema({
     required: true
   },
   lat: {
-    type: String
+    type: Number
   },
   lng: {
-    type: String
+    type: Number
   },
   leads: [
     {
       type: String
     }
   ],
-  members: [
-    {
-      type: Object
-    }
-  ],
+  members: {
+    type: Number
+  },
   twitterUrl: {
     type: String,
     required: true

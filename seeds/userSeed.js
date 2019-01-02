@@ -101,7 +101,7 @@ async function init() {
           if (err) throw err;
           user.password = hash;
           user.save();
-          chapter.members.push(user);
+          chapter.members = chapter.members++;
           chapter.save();
         });
       });

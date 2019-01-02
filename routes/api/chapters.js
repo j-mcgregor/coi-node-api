@@ -6,6 +6,7 @@ const passport = require("passport");
 
 // Models
 const Chapter = require("../../models/Chapter");
+const User = require("../../models/User");
 
 // @route    GET api/chapters/test
 // @desc     Tests Chapters Route
@@ -20,6 +21,14 @@ router.get("/test", (req, res) => res.json({ msg: "Chapters works" }));
 router.get("/", (req, res) => {
   Chapter.find()
     .then(chapters => {
+      chapters.forEach(chapter => {
+        User.find({ chapter: chapter._id })
+          .then(members => {
+            chapter.members = members.length;
+            chapter.save();
+          })
+          .catch(err => console.log(err));
+      });
       return res.json(chapters);
     })
     .catch(err =>
@@ -39,25 +48,38 @@ router.get("/:id", (req, res) => {
     );
 });
 
+// @route    GET api/chapters/:id
+// @desc     Get single chapters members
+// @access   Public
+
+router.get("/:id/members", (req, res) => {
+  User.find({ chapter: req.params.id })
+    .then(users => res.json(users))
+    .catch(err =>
+      res.status(404).json({ nousers: "No Users found for this chapter" })
+    );
+});
+
 // @route    POST api/chapters
 // @desc     Create Chapters
 // @access   Private
 
 router.post(
   "/",
-  // passport.authenticate("jwt", { session: false }),
+  passport.authenticate("jwt", { session: false }),
   (req, res) => {
-    const { errors, isValid } = validateChapterInput(req.body);
-
-    if (!isValid) {
-      return res.status(400).json(errors);
-    }
+    // const { errors, isValid } = validateChapterInput(req.body);
+    //
+    // if (!isValid) {
+    //   return res.status(400).json(errors);
+    // }
 
     const newChapter = new Chapter({
-      country: req.body.country._id,
+      country: req.body.country,
       city: req.body.city,
-      leads: req.body.leads,
-      twitterURL: req.body.twitterURL,
+      lat: req.body.lat,
+      lng: req.body.lng,
+      twitterUrl: req.body.twitterUrl,
       bannerPic: req.body.bannerPic
     });
 

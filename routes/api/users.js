@@ -13,6 +13,7 @@ const keys = require("../../config/keys");
 
 // Load User Model
 const User = require("../../models/User");
+const Chapter = require("../../models/Chapter");
 const Project = require("../../models/Project");
 
 // @route    GET api/users/test
@@ -65,6 +66,8 @@ router.post("/register", (req, res) => {
             .then(user => {
               Chapter.findById(user.chapter)
                 .then(chapter => {
+                  chapter.members.push(user);
+                  chapter.save();
                   chapter.members.forEach(member => {
                     // email the chapter leads
                     if (member.lead) {
@@ -344,7 +347,17 @@ router.get(
     User.findOne({ _id: req.params.id })
       .then(user => {
         user.admin ? (user.admin = false) : (user.admin = true);
-        // user.admin = !user.admin;
+        // Chapter.findById(user.chapter)
+        //   .then(chapter => {
+        //     chapter.members.forEach((member, index) => {
+        //       console.log(member);
+        //       if (member._id === user._id) {
+        //         chapter.members[index] = user;
+        //       }
+        //     });
+        //     chapter.save();
+        //   })
+        //   .catch(err => console.log(err));
         user.save().then(user => res.status(404).json(user));
       })
       .catch(err => {
@@ -364,6 +377,21 @@ router.get(
     User.findOne({ _id: req.params.id })
       .then(user => {
         user.lead ? (user.lead = false) : (user.lead = true);
+        // Chapter.findById(user.chapter)
+        //   .then(chapter => {
+        //     // console.log(chapter.members);
+        //     for (var i = 0; i < chapter.members.length; i++) {
+        //       let chapterID = chapter.members[i]._id.toString();
+        //       let userID = user._id.toString();
+        //
+        //       if (chapterID == userID) {
+        //         console.log("match");
+        //         chapter.members[i] = user;
+        //         chapter.save();
+        //       }
+        //     }
+        //   })
+        //   .catch(err => console.log(err));
         user.save().then(user => res.status(404).json(user));
       })
       .catch(err => {
