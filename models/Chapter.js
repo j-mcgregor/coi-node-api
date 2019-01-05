@@ -26,7 +26,8 @@ const ChapterSchema = new Schema({
     }
   ],
   members: {
-    type: Number
+    type: Number,
+    default: 0
   },
   twitterUrl: {
     type: String,

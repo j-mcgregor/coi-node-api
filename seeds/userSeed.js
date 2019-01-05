@@ -76,6 +76,7 @@ async function init() {
       } else {
         email = `test${i}@test${index}.com`;
       }
+
       const user = new User({
         username: faker.lorem.word(),
         firstName: faker.name.firstName(),
@@ -88,6 +89,8 @@ async function init() {
           bannerDimensions[randBannerPic]
         }/arch`,
         bio: faker.lorem.paragraphs(),
+        twitterUrl: faker.lorem.word(),
+        linkedinUrl: faker.lorem.word(),
         chapter: chapter._id,
         tagline: faker.lorem.sentence(),
         email: email,

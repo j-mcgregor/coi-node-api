@@ -1,3 +1,5 @@
+const async = require("async");
+const crypto = require("crypto");
 const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcryptjs");
@@ -8,6 +10,7 @@ const nodemailer = require("nodemailer");
 // Load input validation
 const validateRegisterInput = require("../../validation/register");
 const validateLoginInput = require("../../validation/login");
+const validatePasswordChangeInput = require("../../validation/passwordChange");
 
 const keys = require("../../config/keys");
 
@@ -66,37 +69,37 @@ router.post("/register", (req, res) => {
             .then(user => {
               Chapter.findById(user.chapter)
                 .then(chapter => {
-                  chapter.members.push(user);
+                  chapter.members = chapter.members++;
                   chapter.save();
-                  chapter.members.forEach(member => {
-                    // email the chapter leads
-                    if (member.lead) {
-                      const transporter = nodemailer.createTransport({
-                        service: "gmail",
-                        auth: {
-                          user: process.env.EMAIL_SRC,
-                          pass: process.env.PASSWORD_SRC
-                        }
-                      });
-
-                      const mailOptions = {
-                        from: "team@circleofyi.com",
-                        to: `${member.email}`,
-                        subject: "A new member",
-                        html: `<h1 style="color:rgb(221, 53, 69);">A new member, ${
-                          user.firstName
-                        } ${user.lastName}, has joined ${chapter.city}</h1>`
-                      };
-
-                      transporter.sendMail(mailOptions, function(error, info) {
-                        if (error) {
-                          console.log(error);
-                        } else {
-                          console.log("Email sent: " + info.response);
-                        }
-                      });
-                    }
-                  });
+                  // chapter.members.forEach(member => {
+                  //   // email the chapter leads
+                  //   if (member.lead) {
+                  //     const transporter = nodemailer.createTransport({
+                  //       service: "gmail",
+                  //       auth: {
+                  //         user: process.env.EMAIL_SRC,
+                  //         pass: process.env.PASSWORD_SRC
+                  //       }
+                  //     });
+                  //
+                  //     const mailOptions = {
+                  //       from: "team@circleofyi.com",
+                  //       to: `${member.email}`,
+                  //       subject: "A new member",
+                  //       html: `<h1 style="color:rgb(221, 53, 69);">A new member, ${
+                  //         user.firstName
+                  //       } ${user.lastName}, has joined ${chapter.city}</h1>`
+                  //     };
+                  //
+                  //     transporter.sendMail(mailOptions, function(error, info) {
+                  //       if (error) {
+                  //         console.log(error);
+                  //       } else {
+                  //         console.log("Email sent: " + info.response);
+                  //       }
+                  //     });
+                  //   }
+                  // });
                 })
                 .catch(err => console.log(err));
               const transporter = nodemailer.createTransport({
@@ -132,15 +135,165 @@ router.post("/register", (req, res) => {
   });
 });
 
+// @route    POST api/users/forgot
+// @desc     Reset a password
+// @access   Private
+
+router.post("/forgot", (req, res) => {
+  async.waterfall(
+    [
+      done => {
+        crypto.randomBytes(20, (err, buf) => {
+          var token = buf.toString("hex");
+          done(err, token);
+        });
+      },
+      (token, done) => {
+        User.findOne({ email: req.body.email }, (err, user) => {
+          if (!user) {
+            res.json({
+              noemailfound: "No account with that email address exists."
+            });
+          }
+
+          user.resetPasswordToken = token;
+          user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
+
+          user.save(err => {
+            done(err, token, user);
+          });
+        });
+      },
+      (token, user, done) => {
+        const transporter = nodemailer.createTransport({
+          service: "gmail",
+          auth: {
+            user: process.env.EMAIL_SRC,
+            pass: process.env.PASSWORD_SRC
+          }
+        });
+
+        let header;
+        if (process.env.NODE_ENV === "production") {
+          header = "coi-client.herokuapp.com";
+        } else {
+          header = "localhost:3000";
+        }
+
+        const mailOptions = {
+          from: "team@circleofyi.com",
+          to: `${user.email}`,
+          subject: "Circle of Intraprenurs password reset",
+          html: `<h1 style="color:rgb(221, 53, 69);">You are receiving this because you (or someone else) have requested the reset of the password for your account</h1><h4>Please click on the following link, or paste this into your browser to complete the process<a href="http://${header}/reset/${token}/">here</a></h4>`
+        };
+
+        transporter.sendMail(mailOptions, (error, info) => {
+          if (error) {
+            console.log(error);
+          } else {
+            console.log(`Email sent: ${info.response}`);
+          }
+        });
+      }
+    ],
+    err => {
+      if (err) return next(err);
+      res.json({ message: "Error" });
+    }
+  );
+});
+
+// @route    POST api/users/reset/:token
+// @desc     Check token
+// @access   Public
+
+router.get("/reset/:token", (req, res) => {
+  User.findOne({
+    resetPasswordToken: req.params.token,
+    resetPasswordExpires: { $gt: Date.now() }
+  })
+    .then(user => res.status(200).json(user))
+    .catch(err => res.status(500).json(err));
+});
+
+// @route    POST api/users/reset/:token
+// @desc     Check token
+// @access   Public
+
+router.post("/reset/:token", (req, res) => {
+  const { errors, isValid } = validatePasswordChangeInput(req.body);
+
+  // Check validation
+  if (!isValid) {
+    return res.status(400).json(errors);
+  }
+
+  async.waterfall([
+    done => {
+      User.findOne(
+        {
+          resetPasswordToken: req.params.token,
+          resetPasswordExpires: { $gt: Date.now() }
+        },
+        (err, user) => {
+          if (!user) {
+            res.json({
+              invalidtoken: "Password reset token is invalid or has expired."
+            });
+          }
+
+          bcrypt.genSalt(10, (err, salt) => {
+            bcrypt.hash(req.body.password, salt, (err, hash) => {
+              if (err) throw err;
+              user.password = hash;
+              user.resetPasswordToken = undefined;
+              user.resetPasswordExpires = undefined;
+              user.save().then(user => {
+                var transporter = nodemailer.createTransport({
+                  service: "gmail",
+                  auth: {
+                    user: process.env.EMAIL_SRC,
+                    pass: process.env.PASSWORD_SRC
+                  }
+                });
+
+                var mailOptions = {
+                  to: user.email,
+                  from: "team@circleofyi.com",
+                  subject: "Your password has been changed",
+                  text:
+                    "Hello,\n\n" +
+                    "This is a confirmation that the password for your account " +
+                    user.email +
+                    " has just been changed.\n"
+                };
+
+                transporter.sendMail(mailOptions, error => {
+                  if (error) {
+                    console.log(error);
+                  } else {
+                    console.log(`Email sent: ${info.response}`);
+                  }
+                });
+                res.json(user);
+              });
+            });
+          });
+        }
+      );
+    }
+  ]);
+});
+
 // @route    POST api/users/feedback
 // @desc     Send feedback
 // @access   Public
 
 router.post("/feedback", (req, res) => {
   const transporter = nodemailer.createTransport({
-    host: "smtp.mail.yahoo.com",
+    host: "smtp.mail.gmail.com",
     port: 465,
-    service: "Yahoo",
+    service: "gmail",
     secure: false,
     auth: {
       user: process.env.EMAIL_SRC,
@@ -149,7 +302,7 @@ router.post("/feedback", (req, res) => {
   });
 
   const mailOptions = {
-    from: "circletest123@yahoo.com",
+    from: "circle.site.test.123@gmail.com",
     to: req.body.email,
     subject: "Feedbck",
     html: `<h1 style="color:rgb(221, 53, 69);">Thanks for your feedback, ${
@@ -167,6 +320,7 @@ router.post("/feedback", (req, res) => {
     }
   });
 });
+
 // @route    GET api/users/login
 // @desc     Login a User / Return the JWT
 // @access   Public

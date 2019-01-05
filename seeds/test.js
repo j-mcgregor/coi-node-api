@@ -35,15 +35,48 @@ var chapters = [
     linkedin2: ""
   },
   {
-    lat: "34.05223",
-    lng: "-118.24368",
-    city: "Los Angeles",
+    lat: "41.8781",
+    lng: "-87.6298",
+    city: "Chicago",
     country: "United States",
-    countryCode: "USA",
+    countryCode: "US",
     facebook: "",
-    twitter: "Deshawaustin",
-    linkedin1: "https://www.linkedin.com/in/justin-deshaw-5574b51a/"
+    twitter: "",
+    linkedin1: "",
+    linkedin2: ""
   },
+  {
+    lat: "-33.918861	",
+    lng: "18.423300",
+    city: "Cape Town",
+    country: "South Africa",
+    countryCode: "ZA",
+    facebook: "",
+    twitter: "",
+    linkedin1: "",
+    linkedin2: ""
+  },
+  {
+    lat: "46.204391",
+    lng: "6.143158",
+    city: "Geneva",
+    country: "Switzerland",
+    countryCode: "CH",
+    facebook: "",
+    twitter: "",
+    linkedin1: "",
+    linkedin2: ""
+  },
+  // {
+  //   lat: "34.05223",
+  //   lng: "-118.24368",
+  //   city: "Los Angeles",
+  //   country: "United States",
+  //   countryCode: "USA",
+  //   facebook: "",
+  //   twitter: "Deshawaustin",
+  //   linkedin1: "https://www.linkedin.com/in/justin-deshaw-5574b51a/"
+  // },
   {
     lat: "38.90719",
     lng: "-77.03687",
@@ -145,16 +178,16 @@ var chapters = [
     twitter: "circleofyi",
     linkedin1: "https://www.linkedin.com/in/ciara-keane-517b6a56/"
   },
-  {
-    lat: "52.48624",
-    lng: "-1.8904",
-    city: "Birmingham",
-    country: "United Kingdom",
-    countryCode: "GB",
-    facebook: "",
-    twitter: "Sallyeaves",
-    linkedin1: "https://www.linkedin.com/in/sally-eaves/"
-  },
+  // {
+  //   lat: "52.48624",
+  //   lng: "-1.8904",
+  //   city: "Birmingham",
+  //   country: "United Kingdom",
+  //   countryCode: "GB",
+  //   facebook: "",
+  //   twitter: "Sallyeaves",
+  //   linkedin1: "https://www.linkedin.com/in/sally-eaves/"
+  // },
   {
     lat: "48.85661",
     lng: "2.35222",
@@ -165,16 +198,16 @@ var chapters = [
     twitter: "Anna_Donnahie ",
     linkedin1: "https://www.linkedin.com/in/annadonahie/"
   },
-  {
-    lat: "43.73841",
-    lng: "7.42461",
-    city: "Monaco",
-    country: "France",
-    countryCode: "FR",
-    facebook: "",
-    twitter: "DaraMiller23",
-    linkedin1: "https://www.linkedin.com/in/dara-mclean-0491563/"
-  },
+  // {
+  //   lat: "43.73841",
+  //   lng: "7.42461",
+  //   city: "Monaco",
+  //   country: "France",
+  //   countryCode: "FR",
+  //   facebook: "",
+  //   twitter: "DaraMiller23",
+  //   linkedin1: "https://www.linkedin.com/in/dara-mclean-0491563/"
+  // },
   {
     lat: "52.37021",
     lng: "4.89516",
@@ -226,16 +259,16 @@ var chapters = [
     linkedin1: "https://www.linkedin.com/in/fabiohenriquez/",
     linkedin2: "https://www.linkedin.com/in/garciahiram/"
   },
-  {
-    lat: "-33.86881",
-    lng: "151.20929",
-    city: "Sydney",
-    country: "Australia",
-    countryCode: "AU",
-    facebook: "https://www.facebook.com/circleofyisydney/",
-    twitter: "LauriesBrown",
-    linkedin1: "https://www.linkedin.com/in/lauriesbrown/"
-  },
+  // {
+  //   lat: "-33.86881",
+  //   lng: "151.20929",
+  //   city: "Sydney",
+  //   country: "Australia",
+  //   countryCode: "AU",
+  //   facebook: "https://www.facebook.com/circleofyisydney/",
+  //   twitter: "LauriesBrown",
+  //   linkedin1: "https://www.linkedin.com/in/lauriesbrown/"
+  // },
   {
     lat: "40.44062",
     lng: "-79.99588",
@@ -267,41 +300,41 @@ var chapters = [
     twitter: "Nadersaif_ns",
     linkedin1: "https://www.linkedin.com/in/nadersaif/",
     linkedin2: "https://www.linkedin.com/in/kabir-sewani-b6512039/"
-  },
-
-  {
-    lat: "59.3293",
-    lng: "18.0686",
-    city: "Stockholm",
-    country: "Sweden",
-    countryCode: "SE",
-    facebook: "https://www.facebook.com/COYIstockholm/",
-    twitter: "circleofyi",
-    linkedin1: "https://www.linkedin.com/in/jacobhlarsson/",
-    linkedin2: "https://www.linkedin.com/in/jonatan-norman/"
-  },
-  {
-    lat: "-33.4489",
-    lng: "-70.6693",
-    city: "Santiago",
-    country: "Chile",
-    countryCode: "CL",
-    twitter: "crisguerreroa",
-    facebook:
-      "https://www.facebook.com/Circle-of-Young-Intrapreneurs-Santiago-161754641086172/",
-    linkedin1: "https://www.linkedin.com/in/cristianguerreroa/"
-  },
-  {
-    lat: "50.8503",
-    lng: "4.3517",
-    city: "Brussels",
-    country: "Belgium",
-    countryCode: "BE",
-    facebook: "https://www.facebook.com/coyibru/",
-    twitter: "circleofyi",
-    linkedin1: "https://www.linkedin.com/in/jason-stamm/",
-    linkedin2: "https://www.linkedin.com/in/elizabethmwoodward/"
   }
+
+  // {
+  //   lat: "59.3293",
+  //   lng: "18.0686",
+  //   city: "Stockholm",
+  //   country: "Sweden",
+  //   countryCode: "SE",
+  //   facebook: "https://www.facebook.com/COYIstockholm/",
+  //   twitter: "circleofyi",
+  //   linkedin1: "https://www.linkedin.com/in/jacobhlarsson/",
+  //   linkedin2: "https://www.linkedin.com/in/jonatan-norman/"
+  // },
+  // {
+  //   lat: "-33.4489",
+  //   lng: "-70.6693",
+  //   city: "Santiago",
+  //   country: "Chile",
+  //   countryCode: "CL",
+  //   twitter: "crisguerreroa",
+  //   facebook:
+  //     "https://www.facebook.com/Circle-of-Young-Intrapreneurs-Santiago-161754641086172/",
+  //   linkedin1: "https://www.linkedin.com/in/cristianguerreroa/"
+  // }
+  // {
+  //   lat: "50.8503",
+  //   lng: "4.3517",
+  //   city: "Brussels",
+  //   country: "Belgium",
+  //   countryCode: "BE",
+  //   facebook: "https://www.facebook.com/coyibru/",
+  //   twitter: "circleofyi",
+  //   linkedin1: "https://www.linkedin.com/in/jason-stamm/",
+  //   linkedin2: "https://www.linkedin.com/in/elizabethmwoodward/"
+  // }
 ];
 
 module.exports = chapters;
