@@ -33,6 +33,12 @@ const ChapterSchema = new Schema({
     type: String,
     required: true
   },
+  facebookUrl: {
+    type: String
+  },
+  linkedinUrl: {
+    type: String
+  },
   bannerPic: {
     type: String,
     required: true

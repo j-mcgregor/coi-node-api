@@ -1,6 +1,8 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const Schema = mongoose.Schema;
+const Project = require("./Project");
+const Post = require("./Post");
 
 // Create Schema
 const UserSchema = new Schema({
@@ -33,7 +35,13 @@ const UserSchema = new Schema({
   projects: [
     {
       type: Schema.Types.ObjectId,
-      ref: "project"
+      ref: Project
+    }
+  ],
+  posts: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: Post
     }
   ],
   profilePic: {

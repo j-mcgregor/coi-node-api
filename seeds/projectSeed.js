@@ -35,7 +35,7 @@ async function createProjects() {
         businesscase: faker.lorem.paragraphs(),
         user: user
       });
-      project.save();
+      project.save().then(project => console.log("project created"));
     }
   });
 }

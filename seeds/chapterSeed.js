@@ -65,7 +65,9 @@ function createChapters(countryArray) {
       city: chapter.city,
       country: chapter.country,
       countryCode: chapter.countryCode,
-      twitterUrl: "circleofyi"
+      twitterUrl: "http://twitter.com/circleofyi",
+      facebookUrl: "http://facebook.com/circleofyi",
+      linkedinUrl: "http://linkedin.com/circleofyi"
     });
     chapters.push(newChapter);
   });
