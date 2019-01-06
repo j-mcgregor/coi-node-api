@@ -7,6 +7,9 @@ const passport = require("passport");
 // Models
 const Project = require("../../models/Project");
 
+// validation
+const validateProjectInput = require("../../validation/project");
+
 // @route    GET api/projectss/test
 // @desc     Tests Projects Route
 // @access   Public
@@ -47,6 +50,13 @@ router.post(
   "/",
   passport.authenticate("jwt", { session: false }),
   (req, res) => {
+    const { errors, isValid } = validateProjectInput(req.body);
+
+    // Check validation
+    if (!isValid) {
+      return res.status(400).json(errors);
+    }
+
     const newProject = new Project({
       user: req.user.id,
       title: req.body.title,
@@ -55,7 +65,10 @@ router.post(
       businesscase: req.body.businesscase
     });
 
-    newProject.save().then(project => res.json(project));
+    newProject
+      .save()
+      .then(project => res.json(project))
+      .catch(err => res.json(err));
   }
 );
 
