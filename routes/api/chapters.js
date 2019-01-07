@@ -85,10 +85,10 @@ router.post(
       lat: req.body.lat,
       lng: req.body.lng,
       twitterUrl: req.body.twitterUrl,
+      facebookUrl: req.body.facebookUrl,
+      linkedinUrl: req.body.linkedinUrl,
       bannerPic: req.body.bannerPic
     });
-
-    console.log(newChapter);
 
     newChapter.save().then(chapter => res.json(chapter));
   }
