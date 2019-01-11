@@ -2,20 +2,19 @@
 const Validator = require('validator');
 const isEmpty = require('./is-empty');
 
-module.exports = function validatePostInput(data){
+module.exports = function validatePostInput(data) {
   const errors = {};
 
-  data.text = !isEmpty(data.text) ? data.text : '';
+  data.body = !isEmpty(data.body) ? data.body : '';
 
-  if(!Validator.isLength(data.text, { min: 10, max: 300 })) {
-    errors.text = 'Post must be between 10 and 300 characters';
+  if (!Validator.isLength(data.body, { min: 10, max: 300 })) {
+    errors.body = 'Post must be between 10 and 300 characters';
   }
 
-  // Validate text empty
-  if (Validator.isEmpty(data.text)) {
-    errors.text = 'Texarea field is required';
+  // Validate body empty
+  if (Validator.isEmpty(data.body)) {
+    errors.body = 'Text field is required';
   }
-
 
   return {
     errors,

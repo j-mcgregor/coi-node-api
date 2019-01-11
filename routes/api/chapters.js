@@ -1,24 +1,24 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
 
-const mongoose = require("mongoose");
-const passport = require("passport");
+const mongoose = require('mongoose');
+const passport = require('passport');
 
 // Models
-const Chapter = require("../../models/Chapter");
-const User = require("../../models/User");
+const Chapter = require('../../models/Chapter');
+const User = require('../../models/User');
 
 // @route    GET api/chapters/test
 // @desc     Tests Chapters Route
 // @access   Public
 
-router.get("/test", (req, res) => res.json({ msg: "Chapters works" }));
+router.get('/test', (req, res) => res.json({ msg: 'Chapters works' }));
 
 // @route    GET api/chapters
 // @desc     Get all Chapters
 // @access   Public
 
-router.get("/", (req, res) => {
+router.get('/', (req, res) => {
   Chapter.find()
     .then(chapters => {
       chapters.forEach(chapter => {
@@ -32,7 +32,7 @@ router.get("/", (req, res) => {
       return res.json(chapters);
     })
     .catch(err =>
-      res.status(404).json({ nochaptersfound: "No Chapters found" })
+      res.status(404).json({ nochaptersfound: 'No Chapters found' })
     );
 });
 
@@ -40,11 +40,11 @@ router.get("/", (req, res) => {
 // @desc     Get single chapter
 // @access   Public
 
-router.get("/:id", (req, res) => {
+router.get('/:id', (req, res) => {
   Chapter.findById(req.params.id)
     .then(chapter => res.json(chapter))
     .catch(err =>
-      res.status(404).json({ nochapterfound: "No Chapter found with that ID" })
+      res.status(404).json({ nochapterfound: 'No Chapter found with that ID' })
     );
 });
 
@@ -52,16 +52,16 @@ router.get("/:id", (req, res) => {
 // @desc     Get single chapters members
 // @access   Public
 
-router.get("/:id/members", (req, res) => {
+router.get('/:id/members', (req, res) => {
   User.find({ chapter: req.params.id })
-    .populate("projects", ["_id", "title"])
-    .populate("posts", ["_id", "title"])
+    .populate('projects', ['_id', 'title'])
+    .populate('posts', ['_id', 'title'])
     .exec()
     .then(users => {
       res.json(users);
     })
     .catch(err =>
-      res.status(404).json({ nousers: "No Users found for this chapter" })
+      res.status(404).json({ nousers: 'No Users found for this chapter' })
     );
 });
 
@@ -70,8 +70,8 @@ router.get("/:id/members", (req, res) => {
 // @access   Private
 
 router.post(
-  "/",
-  passport.authenticate("jwt", { session: false }),
+  '/',
+  passport.authenticate('jwt', { session: false }),
   (req, res) => {
     // const { errors, isValid } = validateChapterInput(req.body);
     //
@@ -94,13 +94,43 @@ router.post(
   }
 );
 
+// @route    PUT api/chapters/:id
+// @desc     Update Chapter
+// @access   Private
+router.put(
+  '/:id',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+    if (req.user.lead === false && req.user.admin === false) {
+      return res.status(401).json({
+        message: 'You must be an admin or a chapter lead to update this chapter'
+      });
+    }
+
+    if (req.user.chapter.toString() !== req.params.id) {
+      return res
+        .status(401)
+        .json({ message: 'You must belong to this chapter ' });
+    }
+
+    Chapter.findByIdAndUpdate(req.params.id, req.body)
+      .then(chapter => {
+        res.status(200).json(chapter);
+      })
+      .catch(err => {
+        errors.chapternotfound = 'Chapter Not Found';
+        return res.status(400).json(errors);
+      });
+  }
+);
+
 // @route    DELETE api/chapters/:id
 // @desc     Delete Chapters
 // @access   Private
 
 router.delete(
-  "/:id",
-  passport.authenticate("jwt", { session: false }),
+  '/:id',
+  passport.authenticate('jwt', { session: false }),
   (req, res) => {
     Profile.findOne({ user: req.user.id }).then(profile => {
       Chapter.findById(req.params.id)
@@ -109,14 +139,14 @@ router.delete(
           if (chapter.user.toString() !== req.user.id) {
             return res
               .status(401)
-              .json({ unauthorised: "User not Authorized" });
+              .json({ unauthorised: 'User not Authorized' });
           }
 
           // Delete
           chapter.remove().then(() => res.json({ success: true }));
         })
         .catch(err =>
-          res.status(404).json({ chapternotfound: "No Chapter Found" })
+          res.status(404).json({ chapternotfound: 'No Chapter Found' })
         );
     });
   }

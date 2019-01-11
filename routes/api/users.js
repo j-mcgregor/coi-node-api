@@ -1,35 +1,35 @@
-const async = require("async");
-const crypto = require("crypto");
-const express = require("express");
+const async = require('async');
+const crypto = require('crypto');
+const express = require('express');
 const router = express.Router();
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-const passport = require("passport");
-const nodemailer = require("nodemailer");
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const passport = require('passport');
+const nodemailer = require('nodemailer');
 
 // Load input validation
-const validateRegisterInput = require("../../validation/register");
-const validateLoginInput = require("../../validation/login");
-const validatePasswordChangeInput = require("../../validation/passwordChange");
+const validateRegisterInput = require('../../validation/register');
+const validateLoginInput = require('../../validation/login');
+const validatePasswordChangeInput = require('../../validation/passwordChange');
 
-const keys = require("../../config/keys");
+const keys = require('../../config/keys');
 
 // Load User Model
-const User = require("../../models/User");
-const Chapter = require("../../models/Chapter");
-const Project = require("../../models/Project");
+const User = require('../../models/User');
+const Chapter = require('../../models/Chapter');
+const Project = require('../../models/Project');
 
 // @route    GET api/users/test
 // @desc     Tests Users Route
 // @access   Public
 
-router.get("/test", (req, res) => res.json({ msg: "Users works" }));
+router.get('/test', (req, res) => res.json({ msg: 'Users works' }));
 
 // @route    POST api/users/register
 // @desc     Register a User
 // @access   Public
 
-router.post("/register", (req, res) => {
+router.post('/register', (req, res) => {
   // Bring in the function from validation/register
   // The errors starts and ends as an empty object
   const { errors, isValid } = validateRegisterInput(req.body);
@@ -43,7 +43,7 @@ router.post("/register", (req, res) => {
   User.findOne({ email: req.body.email }).then(user => {
     if (user) {
       return res.status(400).json({
-        email: "Email already exists"
+        email: 'Email already exists'
       });
     } else {
       const newUser = new User({
@@ -103,7 +103,7 @@ router.post("/register", (req, res) => {
                 })
                 .catch(err => console.log(err));
               const transporter = nodemailer.createTransport({
-                service: "gmail",
+                service: 'gmail',
                 auth: {
                   user: process.env.EMAIL_SRC,
                   pass: process.env.PASSWORD_SRC
@@ -111,9 +111,9 @@ router.post("/register", (req, res) => {
               });
 
               const mailOptions = {
-                from: "team@circleofyi.com",
+                from: 'team@circleofyi.com',
                 to: `${user.email}`,
-                subject: "Welcome to the Circle of Intraprenurs",
+                subject: 'Welcome to the Circle of Intraprenurs',
                 html: `<h1 style="color:rgb(221, 53, 69);">Welcome to the Circle of Intrapreneurs, ${
                   user.firstName
                 }</h1><a href="http://www.google.com">Google</a>`
@@ -123,7 +123,7 @@ router.post("/register", (req, res) => {
                 if (error) {
                   console.log(error);
                 } else {
-                  console.log("Email sent: " + info.response);
+                  console.log('Email sent: ' + info.response);
                 }
               });
               res.json(user);
@@ -139,12 +139,12 @@ router.post("/register", (req, res) => {
 // @desc     Reset a password
 // @access   Private
 
-router.post("/forgot", (req, res) => {
+router.post('/forgot', (req, res) => {
   async.waterfall(
     [
       done => {
         crypto.randomBytes(20, (err, buf) => {
-          var token = buf.toString("hex");
+          var token = buf.toString('hex');
           done(err, token);
         });
       },
@@ -152,7 +152,7 @@ router.post("/forgot", (req, res) => {
         User.findOne({ email: req.body.email }, (err, user) => {
           if (!user) {
             res.json({
-              noemailfound: "No account with that email address exists."
+              noemailfound: 'No account with that email address exists.'
             });
           }
 
@@ -166,7 +166,7 @@ router.post("/forgot", (req, res) => {
       },
       (token, user, done) => {
         const transporter = nodemailer.createTransport({
-          service: "gmail",
+          service: 'gmail',
           auth: {
             user: process.env.EMAIL_SRC,
             pass: process.env.PASSWORD_SRC
@@ -174,16 +174,16 @@ router.post("/forgot", (req, res) => {
         });
 
         let header;
-        if (process.env.NODE_ENV === "production") {
-          header = "coi-client.herokuapp.com";
+        if (process.env.NODE_ENV === 'production') {
+          header = 'coi-client.herokuapp.com';
         } else {
-          header = "localhost:3000";
+          header = 'localhost:3000';
         }
 
         const mailOptions = {
-          from: "team@circleofyi.com",
+          from: 'team@circleofyi.com',
           to: `${user.email}`,
-          subject: "Circle of Intraprenurs password reset",
+          subject: 'Circle of Intraprenurs password reset',
           html: `<h1 style="color:rgb(221, 53, 69);">You are receiving this because you (or someone else) have requested the reset of the password for your account</h1><h4>Please click on the following link, or paste this into your browser to complete the process<a href="http://${header}/reset/${token}/">here</a></h4>`
         };
 
@@ -198,7 +198,7 @@ router.post("/forgot", (req, res) => {
     ],
     err => {
       if (err) return next(err);
-      res.json({ message: "Error" });
+      res.json({ message: 'Error' });
     }
   );
 });
@@ -207,7 +207,7 @@ router.post("/forgot", (req, res) => {
 // @desc     Check token
 // @access   Public
 
-router.get("/reset/:token", (req, res) => {
+router.get('/reset/:token', (req, res) => {
   User.findOne({
     resetPasswordToken: req.params.token,
     resetPasswordExpires: { $gt: Date.now() }
@@ -220,7 +220,7 @@ router.get("/reset/:token", (req, res) => {
 // @desc     Check token
 // @access   Public
 
-router.post("/reset/:token", (req, res) => {
+router.post('/reset/:token', (req, res) => {
   const { errors, isValid } = validatePasswordChangeInput(req.body);
 
   // Check validation
@@ -238,7 +238,7 @@ router.post("/reset/:token", (req, res) => {
         (err, user) => {
           if (!user) {
             res.json({
-              invalidtoken: "Password reset token is invalid or has expired."
+              invalidtoken: 'Password reset token is invalid or has expired.'
             });
           }
 
@@ -250,7 +250,7 @@ router.post("/reset/:token", (req, res) => {
               user.resetPasswordExpires = undefined;
               user.save().then(user => {
                 var transporter = nodemailer.createTransport({
-                  service: "gmail",
+                  service: 'gmail',
                   auth: {
                     user: process.env.EMAIL_SRC,
                     pass: process.env.PASSWORD_SRC
@@ -259,13 +259,13 @@ router.post("/reset/:token", (req, res) => {
 
                 var mailOptions = {
                   to: user.email,
-                  from: "team@circleofyi.com",
-                  subject: "Your password has been changed",
+                  from: 'team@circleofyi.com',
+                  subject: 'Your password has been changed',
                   text:
-                    "Hello,\n\n" +
-                    "This is a confirmation that the password for your account " +
+                    'Hello,\n\n' +
+                    'This is a confirmation that the password for your account ' +
                     user.email +
-                    " has just been changed.\n"
+                    ' has just been changed.\n'
                 };
 
                 transporter.sendMail(mailOptions, error => {
@@ -289,11 +289,11 @@ router.post("/reset/:token", (req, res) => {
 // @desc     Send feedback
 // @access   Public
 
-router.post("/feedback", (req, res) => {
+router.post('/feedback', (req, res) => {
   const transporter = nodemailer.createTransport({
-    host: "smtp.mail.gmail.com",
+    host: 'smtp.mail.gmail.com',
     port: 465,
-    service: "gmail",
+    service: 'gmail',
     secure: false,
     auth: {
       user: process.env.EMAIL_SRC,
@@ -302,9 +302,9 @@ router.post("/feedback", (req, res) => {
   });
 
   const mailOptions = {
-    from: "circle.site.test.123@gmail.com",
+    from: 'circle.site.test.123@gmail.com',
     to: req.body.email,
-    subject: "Feedbck",
+    subject: 'Feedbck',
     html: `<h1 style="color:rgb(221, 53, 69);">Thanks for your feedback, ${
       req.body.fullName
     }</h1><h3>You provided the following piece of feedback to the Circle of Intrapreneurs:</h3><p>${
@@ -316,7 +316,7 @@ router.post("/feedback", (req, res) => {
     if (error) {
       console.log(error);
     } else {
-      console.log("Email sent: " + info.response);
+      console.log('Email sent: ' + info.response);
     }
   });
 });
@@ -325,7 +325,7 @@ router.post("/feedback", (req, res) => {
 // @desc     Login a User / Return the JWT
 // @access   Public
 
-router.post("/login", (req, res) => {
+router.post('/login', (req, res) => {
   const { errors, isValid } = validateLoginInput(req.body);
 
   // Check validation
@@ -340,7 +340,7 @@ router.post("/login", (req, res) => {
   User.findOne({ email }).then(user => {
     // Check for user
     if (!user) {
-      errors.email = "User not found";
+      errors.email = 'User not found';
       return res.status(400).json(errors);
     }
 
@@ -365,12 +365,12 @@ router.post("/login", (req, res) => {
           (err, token) => {
             res.json({
               success: true,
-              token: "Bearer " + token
+              token: 'Bearer ' + token
             });
           }
         );
       } else {
-        errors.password = "Password incorrect";
+        errors.password = 'Password incorrect';
         return res.status(400).json(errors);
       }
     });
@@ -382,12 +382,12 @@ router.post("/login", (req, res) => {
 // @access   Public (for now)
 
 router.delete(
-  "/:id",
+  '/:id',
   // passport.authenticate("jwt", { session: false }),
   (req, res) => {
     // Find User by email
     User.deleteOne({ _id: req.params.id })
-      .then(res.send("User deleted"))
+      .then(res.send('User deleted'))
       .catch(err => console.log(err));
   }
 );
@@ -397,8 +397,8 @@ router.delete(
 // @access   Private
 
 router.get(
-  "/current",
-  passport.authenticate("jwt", { session: false }),
+  '/current',
+  passport.authenticate('jwt', { session: false }),
   (req, res) => {
     res.json(req.user);
   }
@@ -416,7 +416,31 @@ router.get(
     User.findById(req.params.id)
       .then(user => res.status(200).json(user))
       .catch(err => {
-        errors.usernotfound = "User Not Found";
+        errors.usernotfound = 'User Not Found';
+        return res.status(400).json(errors);
+      });
+  }
+);
+
+// @route    GET api/users/:id/comment
+// @desc     Return certain details for the selected user
+// @access   Private
+
+router.get(
+  `/:id/comment`,
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+    const errors = {};
+    User.findById(req.params.id)
+      .then(user => {
+        res.status(200).json({
+          firstName: user.firstName,
+          lastName: user.lastName,
+          profilePic: user.profilePic
+        });
+      })
+      .catch(err => {
+        errors.usernotfound = 'User Not Found';
         return res.status(400).json(errors);
       });
   }
@@ -428,13 +452,13 @@ router.get(
 
 router.put(
   `/:id`,
-  passport.authenticate("jwt", { session: false }),
+  passport.authenticate('jwt', { session: false }),
   (req, res) => {
     const errors = {};
     User.findByIdAndUpdate(req.user.id, req.body)
       .then(user => res.status(200).json(user))
       .catch(err => {
-        errors.usernotfound = "User Not Found";
+        errors.usernotfound = 'User Not Found';
         return res.status(400).json(errors);
       });
   }
@@ -444,14 +468,14 @@ router.put(
 // @desc     Get a users projects
 // @access   Private
 
-router.get("/:id/projects", (req, res) => {
+router.get('/:id/projects', (req, res) => {
   Project.find({ user: req.params.id })
-    .populate("user", ["_id", "firstName", "lastName"])
+    .populate('user', ['_id', 'firstName', 'lastName'])
     .then(projects => res.json(projects))
     .catch(err =>
       res
         .status(404)
-        .json({ noprojectsfound: "No Project found with that User" })
+        .json({ noprojectsfound: 'No Project found with that User' })
     );
 });
 
@@ -459,10 +483,10 @@ router.get("/:id/projects", (req, res) => {
 // @desc     Return all users
 // @access   Public
 
-router.get("/", (req, res) => {
+router.get('/', (req, res) => {
   User.find()
-    .populate("chapter", ["_id", "city"])
-    .populate("projects", ["_id", "title"])
+    .populate('chapter', ['_id', 'city'])
+    .populate('projects', ['_id', 'title'])
     .exec()
     .then(users => {
       res.status(200).json(users);
@@ -475,8 +499,8 @@ router.get("/", (req, res) => {
 // @access   Private
 
 router.get(
-  "/",
-  passport.authenticate("jwt", { session: false }),
+  '/',
+  passport.authenticate('jwt', { session: false }),
   (req, res) => {
     const errors = {};
     // comes from the schema
@@ -495,8 +519,8 @@ router.get(
 // @access   Private
 
 router.get(
-  "/:id/admin",
-  passport.authenticate("jwt", { session: false }),
+  '/:id/admin',
+  passport.authenticate('jwt', { session: false }),
   (req, res) => {
     User.findOne({ _id: req.params.id })
       .then(user => {
@@ -525,8 +549,8 @@ router.get(
 // @access   Private
 
 router.get(
-  "/:id/lead",
-  passport.authenticate("jwt", { session: false }),
+  '/:id/lead',
+  passport.authenticate('jwt', { session: false }),
   (req, res) => {
     User.findOne({ _id: req.params.id })
       .then(user => {

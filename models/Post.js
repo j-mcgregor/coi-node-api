@@ -1,11 +1,11 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 // Create Schema
 const PostSchema = {
   user: {
     type: Schema.Types.ObjectId,
-    ref: "users"
+    ref: 'users'
   },
   title: {
     type: String,
@@ -27,7 +27,7 @@ const PostSchema = {
     {
       user: {
         type: Schema.Types.ObjectId,
-        ref: "users"
+        ref: 'users'
       }
     }
   ],
@@ -35,13 +35,16 @@ const PostSchema = {
     {
       user: {
         type: Schema.Types.ObjectId,
-        ref: "users"
+        ref: 'users'
       },
-      text: {
+      body: {
         type: String,
         required: true
       },
-      name: {
+      authorName: {
+        type: String
+      },
+      profilePic: {
         type: String
       },
       date: {
@@ -56,4 +59,4 @@ const PostSchema = {
   }
 };
 
-module.exports = Post = mongoose.model("post", PostSchema);
+module.exports = Post = mongoose.model('post', PostSchema);
