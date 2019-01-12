@@ -54,9 +54,9 @@ router.get('/:id', (req, res) => {
 
 router.get('/:id/members', (req, res) => {
   User.find({ chapter: req.params.id })
-    .populate('projects', ['_id', 'title'])
-    .populate('posts', ['_id', 'title'])
-    .exec()
+    // .populate('projects', ['_id', 'title'])
+    // .populate('posts', ['_id', 'title'])
+    // .exec()
     .then(users => {
       res.json(users);
     })

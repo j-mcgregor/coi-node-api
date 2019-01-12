@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 // Create Schema
@@ -29,6 +29,14 @@ const ChapterSchema = new Schema({
     type: Number,
     default: 0
   },
+  posts: {
+    type: Number,
+    default: 0
+  },
+  projects: {
+    type: Number,
+    default: 0
+  },
   twitterUrl: {
     type: String,
     required: true
@@ -49,4 +57,4 @@ const ChapterSchema = new Schema({
   }
 });
 
-module.exports = Chapter = mongoose.model("chapters", ChapterSchema);
+module.exports = Chapter = mongoose.model('chapters', ChapterSchema);
