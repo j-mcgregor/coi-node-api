@@ -455,7 +455,7 @@ router.put(
   passport.authenticate('jwt', { session: false }),
   (req, res) => {
     const errors = {};
-    User.findByIdAndUpdate(req.user.id, req.body)
+    User.findOneAndUpdate({ _id: req.user.id }, req.body)
       .then(user => res.status(200).json(user))
       .catch(err => {
         errors.usernotfound = 'User Not Found';
