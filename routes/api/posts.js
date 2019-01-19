@@ -121,7 +121,7 @@ router.delete(
     console.log(`=========${req.params.id}=========`);
 
     Post.deleteOne({ _id: req.params.id })
-      .then(() => res.json({ success: true }))
+      .then(res.send('Post deleted'))
       .catch(err => res.status(404).json({ postnotfound: 'No Post Found' }));
   }
 );
