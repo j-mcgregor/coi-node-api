@@ -455,6 +455,8 @@ router.put(
   passport.authenticate('jwt', { session: false }),
   (req, res) => {
     const errors = {};
+    console.log(req.user.id);
+
     // Something is wrong here with the update function....
     User.findByIdAndUpdate(req.user.id, req.body)
       .then(user => res.status(200).json(user))
