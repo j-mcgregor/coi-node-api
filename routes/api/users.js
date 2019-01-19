@@ -455,10 +455,12 @@ router.put(
   passport.authenticate('jwt', { session: false }),
   (req, res) => {
     const errors = {};
-    User.findOneAndUpdate({ _id: req.user.id }, req.body)
+    // Something is wrong here with the update function....
+    User.findByIdAndUpdate(req.user.id, req.body)
       .then(user => res.status(200).json(user))
       .catch(err => {
         errors.usernotfound = 'User Not Found';
+        errors.errors = err;
         return res.status(400).json(errors);
       });
   }
