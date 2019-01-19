@@ -116,7 +116,7 @@ router.put(
 
 router.delete(
   '/:id',
-  passport.authenticate('jwt', { session: false }),
+  // passport.authenticate('jwt', { session: false }),
   (req, res) => {
     console.log(`=========${req.params.id}=========`);
 
