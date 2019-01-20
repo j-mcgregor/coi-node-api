@@ -5,8 +5,11 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const passport = require('passport');
+// Emails
 const nodemailer = require('nodemailer');
-
+const welcomeEmail = require('./emails/welcome');
+const passwordReset = require('./emails/passwordReset');
+const passwordChanged = require('./emails/passwordChanged');
 // Load input validation
 const validateRegisterInput = require('../../validation/register');
 const validateLoginInput = require('../../validation/login');
@@ -67,41 +70,46 @@ router.post('/register', (req, res) => {
           newUser
             .save()
             .then(user => {
+              // ====== UPDATE THE CHAPTER START ======
               Chapter.findById(user.chapter)
                 .then(chapter => {
                   chapter.members = chapter.members++;
                   chapter.save();
-                  // chapter.members.forEach(member => {
-                  //   // email the chapter leads
-                  //   if (member.lead) {
-                  //     const transporter = nodemailer.createTransport({
-                  //       service: "gmail",
-                  //       auth: {
-                  //         user: process.env.EMAIL_SRC,
-                  //         pass: process.env.PASSWORD_SRC
-                  //       }
-                  //     });
-                  //
-                  //     const mailOptions = {
-                  //       from: "team@circleofyi.com",
-                  //       to: `${member.email}`,
-                  //       subject: "A new member",
-                  //       html: `<h1 style="color:rgb(221, 53, 69);">A new member, ${
-                  //         user.firstName
-                  //       } ${user.lastName}, has joined ${chapter.city}</h1>`
-                  //     };
-                  //
-                  //     transporter.sendMail(mailOptions, function(error, info) {
-                  //       if (error) {
-                  //         console.log(error);
-                  //       } else {
-                  //         console.log("Email sent: " + info.response);
-                  //       }
-                  //     });
-                  //   }
-                  // });
                 })
                 .catch(err => console.log(err));
+              // ====== UPDATE THE CHAPTER END ======
+
+              // ===== EMAIL THE CHAPTER LEADS START =====
+              User.find({ chapter: user.chapter.toString() })
+                .then(users => {
+                  const leads = users.filter(user => user.lead === true);
+                  leads.forEach(lead => {
+                    const transporter = nodemailer.createTransport({
+                      service: 'gmail',
+                      auth: {
+                        user: process.env.EMAIL_SRC,
+                        pass: process.env.PASSWORD_SRC
+                      }
+                    });
+
+                    const mailOptions = {
+                      from: 'team@circleofyi.com',
+                      to: `${lead.email}`,
+                      subject: 'A member just joined',
+                      html: 'A member of your chapter has just joined'
+                    };
+
+                    transporter.sendMail(mailOptions, function(error, info) {
+                      error
+                        ? console.log(error)
+                        : console.log('Email sent: ' + info.response);
+                    });
+                  });
+                })
+                .catch(err => console.log(err));
+              // ===== EMAIL THE CHAPTER LEADS END =====
+
+              // ====== EMAIL NEW MEMBER START ======
               const transporter = nodemailer.createTransport({
                 service: 'gmail',
                 auth: {
@@ -113,19 +121,16 @@ router.post('/register', (req, res) => {
               const mailOptions = {
                 from: 'team@circleofyi.com',
                 to: `${user.email}`,
-                subject: 'Welcome to the Circle of Intraprenurs',
-                html: `<h1 style="color:rgb(221, 53, 69);">Welcome to the Circle of Intrapreneurs, ${
-                  user.firstName
-                }</h1><a href="http://www.google.com">Google</a>`
+                subject: 'Welcome to the Inner Circle :)',
+                html: welcomeEmail
               };
 
               transporter.sendMail(mailOptions, function(error, info) {
-                if (error) {
-                  console.log(error);
-                } else {
-                  console.log('Email sent: ' + info.response);
-                }
+                error
+                  ? console.log(error)
+                  : console.log('Email sent: ' + info.response);
               });
+              // ====== EMAIL NEW MEMBER END ======
               res.json(user);
             })
             .catch(err => res.json(err));
@@ -177,14 +182,14 @@ router.post('/forgot', (req, res) => {
         if (process.env.NODE_ENV === 'production') {
           header = 'coi-client.herokuapp.com';
         } else {
-          header = 'localhost:3000';
+          header = 'localhost:8080';
         }
 
         const mailOptions = {
           from: 'team@circleofyi.com',
           to: `${user.email}`,
-          subject: 'Circle of Intraprenurs password reset',
-          html: `<h1 style="color:rgb(221, 53, 69);">You are receiving this because you (or someone else) have requested the reset of the password for your account</h1><h4>Please click on the following link, or paste this into your browser to complete the process<a href="http://${header}/reset/${token}/">here</a></h4>`
+          subject: 'Follow the link if you requested a password change',
+          html: passwordReset(header, token)
         };
 
         transporter.sendMail(mailOptions, (error, info) => {
@@ -261,11 +266,7 @@ router.post('/reset/:token', (req, res) => {
                   to: user.email,
                   from: 'team@circleofyi.com',
                   subject: 'Your password has been changed',
-                  text:
-                    'Hello,\n\n' +
-                    'This is a confirmation that the password for your account ' +
-                    user.email +
-                    ' has just been changed.\n'
+                  html: passwordChanged
                 };
 
                 transporter.sendMail(mailOptions, error => {

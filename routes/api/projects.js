@@ -4,8 +4,14 @@ const router = express.Router();
 const mongoose = require('mongoose');
 const passport = require('passport');
 
+// emails
+const nodemailer = require('nodemailer');
+const projectProposal = require('./emails/projectProposal');
+
 // Models
 const Project = require('../../models/Project');
+const User = require('../../models/User');
+const Chapter = require('../../models/Chapter');
 
 // validation
 const validateProjectInput = require('../../validation/project');
@@ -67,7 +73,65 @@ router.post(
 
     newProject
       .save()
-      .then(project => res.json(project))
+      .then(project => {
+        // ====== EMAIL PROJECT AUTHOR START ======
+        User.findById(req.user.id)
+          .then(user => {
+            // ====== EMAIL AUTHORS CHAPTER LEADS START ======
+            User.find({ chapter: user.chapter })
+              .then(users => {
+                const leads = users.filter(user => user.lead === true);
+                leads.forEach(lead => {
+                  const transporter = nodemailer.createTransport({
+                    service: 'gmail',
+                    auth: {
+                      user: process.env.EMAIL_SRC,
+                      pass: process.env.PASSWORD_SRC
+                    }
+                  });
+
+                  const mailOptions = {
+                    from: 'team@circleofyi.com',
+                    to: `${lead.email}`,
+                    subject: 'A member just posted',
+                    html:
+                      'A member of your chapter has just submitted a proposal'
+                  };
+
+                  transporter.sendMail(mailOptions, function(error, info) {
+                    error
+                      ? console.log(error)
+                      : console.log('Email sent: ' + info.response);
+                  });
+                });
+              })
+              .catch(err => console.log(err));
+            // ====== EMAIL AUTHORS CHAPTER LEADS END ======
+            const transporter = nodemailer.createTransport({
+              service: 'gmail',
+              auth: {
+                user: process.env.EMAIL_SRC,
+                pass: process.env.PASSWORD_SRC
+              }
+            });
+
+            const mailOptions = {
+              from: 'team@circleofyi.com',
+              to: `${user.email}`,
+              subject: 'You\'ve started your journey!',
+              html: projectProposal
+            };
+
+            transporter.sendMail(mailOptions, function(error, info) {
+              error
+                ? console.log(error)
+                : console.log('Email sent: ' + info.response);
+            });
+          })
+          .catch(err => console.log(err));
+        // ====== EMAIL PROJECT AUTHOR END ======
+        res.json(project);
+      })
       .catch(err => res.json(err));
   }
 );
@@ -101,13 +165,13 @@ router.delete(
     Project.findById(req.params.id)
       .then(project => {
         // Check for project owner
-        if (!req.user.admin) {
-          return res.status(401).json({
-            unauthorised: 'User not Authorized',
-            project: project,
-            user: req.user
-          });
-        }
+        // if (!req.user.admin) {
+        //   return res.status(401).json({
+        //     unauthorised: 'User not Authorized',
+        //     project: project,
+        //     user: req.user
+        //   });
+        // }
 
         // Delete
         project.remove();
